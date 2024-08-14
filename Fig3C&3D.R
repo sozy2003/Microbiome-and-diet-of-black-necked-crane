@@ -96,7 +96,7 @@ p4
 #alpha diversity
 
 
-otu_Flattening<-read.table("otu_per_coi.txt", header=T, row.names= 1, sep="\t") 
+otu_Flattening<-read.table("otu_rare_coi.txt", header=T, row.names= 1, sep="\t") 
 otu_Flattening<-t(otu_Flattening)
 
 shannon <- diversity(otu_Flattening, index="shannon", MARGIN = 1)
@@ -167,14 +167,61 @@ p9
 cor.test(frame_rbcl$simpson_rbcl, frame_rbcl$simpson, method = "pearson")
 cor.test(frame_coi$simpson_coi, frame_coi$simpson, method = "pearson")
 
+#rbcl
+#spring
+cor.test(frame_rbcl[c(1:29),]$simpson_rbcl, frame_rbcl[c(1:29),]$simpson, method = "pearson")
+
+#autumn
+cor.test(frame_rbcl[c(30:58),]$simpson_rbcl, frame_rbcl[c(30:58),]$simpson, method = "pearson")
+
+#coi
+#spring
+cor.test(frame_coi[c(1:28),]$simpson_coi, frame_rbcl[c(1:28),]$simpson, method = "pearson")
+
+#autumn
+cor.test(frame_coi[c(29:56),]$simpson_coi, frame_rbcl[c(29:56),]$simpson, method = "pearson")
+
+
+
+#animal and plant
 cor.test(frame_rbcl$richness_rbcl, frame_rbcl$richness, method = "pearson")
 cor.test(frame_coi$richness_coi, frame_coi$richness, method = "pearson")
+
+
+#spearman
+
+#animal##
+cor.test(frame_coi$simpson_coi, frame_coi$simpson, method = "spearman")
+
+#spring
+cor.test(frame_coi[c(1:28),]$simpson_coi, frame_coi[c(1:28),]$simpson, method = "spearman")
+
+#autumn
+cor.test(frame_coi[c(29:56),]$simpson_coi, frame_coi[c(29:56),]$simpson, method = "spearman")
+
+
+#plant###
+cor.test(frame_rbcl$simpson_rbcl, frame_rbcl$simpson, method = "spearman")
+
+#spring
+cor.test(frame_rbcl[c(1:29),]$simpson_rbcl, frame_rbcl[c(1:29),]$simpson, method = "spearman")
+
+#autumn
+cor.test(frame_rbcl[c(30:58),]$simpson_rbcl, frame_rbcl[c(30:58),]$simpson, method = "spearman")
+
+
+
 
 
 #fig s9
 
 
-ps1 <- ggplot(frame_coi,aes(x = richness_coi, y =richness))+
+
+#delect the outlier point 
+
+frame_coi_sec<-frame_coi[-54,]
+
+ps1 <- ggplot(frame_coi_sec,aes(x = richness_coi, y =richness))+
   
   geom_point(aes(color=SamplingSeason))+
   geom_smooth(frame_coi[frame_coi$SamplingSeason=="Spring",], mapping=aes(x = richness_coi, y = richness,color=SamplingSeason),method = "lm")+
@@ -191,9 +238,9 @@ ps1<-ps1+scale_color_manual(values=c("#FFCC00","#33CC33" ))+
 
 ps1
 
+frame_rbcl_sec<-frame_rbcl[-7,]
 
-
-ps2 <- ggplot(frame_rbcl,aes(x = richness_rbcl, y =richness))+
+ps2 <- ggplot(frame_rbcl_sec,aes(x = richness_rbcl, y =richness))+
   
   geom_point(aes(color=SamplingSeason))+
   geom_smooth(frame_rbcl[frame_rbcl$SamplingSeason=="Spring",], mapping=aes(x =richness_rbcl, y =richness,color=SamplingSeason),method = "lm")+
@@ -214,6 +261,28 @@ figs<-ps1+ps2
 figs
 
 #ggsave("pearson_diet_micro_richness.pdf", figs, width =10, height = 4)
+
+
+#spearman
+
+#animal##
+cor.test(frame_coi_sec$richness_coi, frame_coi_sec$richness, method = "spearman")
+
+#spring
+cor.test(frame_coi_sec[c(1:28),]$richness_coi, frame_coi_sec[c(1:28),]$richness, method = "spearman")
+
+#autumn
+cor.test(frame_coi_sec[c(29:55),]$richness_coi, frame_coi_sec[c(29:55),]$richness, method = "spearman")
+
+
+#plant###
+cor.test(frame_rbcl_sec$richness_rbcl, frame_rbcl_sec$richness, method = "spearman")
+
+#spring
+cor.test(frame_rbcl_sec[c(1:28),]$richness_rbcl, frame_rbcl_sec[c(1:28),]$richness, method = "spearman")
+
+#autumn
+cor.test(frame_rbcl_sec[c(30:57),]$richness_rbcl, frame_rbcl_sec[c(30:57),]$richness, method = "spearman")
 
 
 
