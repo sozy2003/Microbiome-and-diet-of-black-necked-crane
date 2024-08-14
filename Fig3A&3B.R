@@ -85,14 +85,17 @@ betadis_ma<- betadiv[row.names(betadiv)%in%row.names(betadiv_coi),colnames(betad
 
 
 
-frame_fan$allsample<- "allsample"
+
 library("dplyr")
 frame_fan<-frame_fan %>%
   mutate(group = case_when(
-    grepl("Spring", SamplingSeason) ~ "Apre-breeding",
-    grepl("Autumn",SamplingSeason) ~ "post-breeding",))
-frame_fan$group <- factor(frame_fan$group,levels = c("Apre-breeding", "post-breeding"))  
+    grepl("Spring", SamplingSeason) ~ "pre-breeding",
+    grepl("Autumn",SamplingSeason) ~ "post-breeding",
+    grepl("twoSeason",SamplingSeason) ~ "twoSeason"))
 
+frame_fan$group <- factor(frame_fan$group,levels = c("pre-breeding", "post-breeding","twoSeason"))  
+
+frame_fan$allsample<-"allsample"
 
 p4<- ggplot(frame_fan,aes(x = value_coi, y = value))+
   
@@ -104,7 +107,7 @@ p4<- ggplot(frame_fan,aes(x = value_coi, y = value))+
   scale_y_continuous(name = "Bray-Curtis microbiome dissimilarity")+
   scale_x_continuous(name = "Bray-Curtis dietary(coi) dissimilarity")
 p4<-p4+
-  scale_color_manual(values=c("blue","#FFCC00","#33CC33"))+
+  scale_color_manual(values=c("#FFCC00","#33CC33","grey","blue"))+
   annotate("text",label="pearson:r==0.1512~p<0.05",family="Times",parse=T,x=0.70,y=0.2,color="blue",size=4)
   
 p4
@@ -117,6 +120,20 @@ set.seed(000)
 mantel(betadis_ma[c(1:28),c(1:28)],betadiv_coi[c(1:28),c(1:28)],method="pearson")
 set.seed(000)
 mantel(betadis_ma[c(29:56),c(29:56)],betadiv_coi[c(29:56),c(29:56)],method="pearson")
+
+#spearman
+
+set.seed(000)
+mantel(betadis_ma,betadiv_coi,method="spearman")#0.1521
+set.seed(000)
+mantel(betadis_ma[c(1:28),c(1:28)],betadiv_coi[c(1:28),c(1:28)],method="spearman")
+set.seed(000)
+mantel(betadis_ma[c(29:56),c(29:56)],betadiv_coi[c(29:56),c(29:56)],method="spearman")
+
+
+
+
+
 ######################################################rbcl######################################################
  
 #bray_curtis distance
@@ -180,15 +197,16 @@ frame_fan_rbcl$allsample<-"allsample"
 library("dplyr")
 frame_fan_rbcl<-frame_fan_rbcl %>%
   mutate(group = case_when(
-    grepl("Spring", SamplingSeason) ~ "Apre-breeding",
-    grepl("Autumn",SamplingSeason) ~ "post-breeding",))
+    grepl("Spring", SamplingSeason) ~ "pre-breeding",
+    grepl("Autumn",SamplingSeason) ~ "post-breeding",
+    grepl("twoSeason",SamplingSeason) ~ "twoSeason"))
 
 
 
 
-frame_fan_rbcl$group <- factor(frame_fan_rbcl$group,levels = c("Apre-breeding", "post-breeding"))  
+frame_fan_rbcl$group <- factor(frame_fan_rbcl$group,levels = c("pre-breeding", "post-breeding","twoSeason"))  
 
-
+frame_fan_rbcl<-na.omit(frame_fan_rbcl)
 p8<- ggplot(frame_fan_rbcl,aes(x = value_rbcl, y = value))+
   
   geom_point(aes(color=group))+
@@ -201,7 +219,7 @@ p8<- ggplot(frame_fan_rbcl,aes(x = value_rbcl, y = value))+
   
 
 p8<-p8+
-  scale_color_manual(values=c("blue","#FFCC00","#33CC33","#CCCCCC"))+
+  scale_color_manual(values=c("#FFCC00","#33CC33","grey","blue"))+
   annotate("text",label="pearson:r==0.2924~p==0.001",family="Times",parse=T,x=0.70,y=0.2,color="blue",size=4)
 
 
@@ -226,6 +244,19 @@ set.seed(000)
 mantel(betadis_ma_rbcl[c(1:28),c(1:28)],betadiv_rbcl[c(1:28),c(1:28)],method="pearson")
 set.seed(000)
 mantel(betadis_ma_rbcl[c(29:58),c(29:58)],betadiv_rbcl[c(29:58),c(29:58)],method="pearson")
+
+
+
+#spearman
+
+set.seed(000)
+mantel(betadis_ma_rbcl,betadiv_rbcl,method="spearman")
+set.seed(000)
+mantel(betadis_ma_rbcl[c(1:28),c(1:28)],betadiv_rbcl[c(1:28),c(1:28)],method="spearman")
+set.seed(000)
+mantel(betadis_ma_rbcl[c(29:58),c(29:58)],betadiv_rbcl[c(29:58),c(29:58)],method="spearman")
+
+
 
 #animal vs plant
 betadiv_rbcl<- betadiv_rbcl[row.names(betadiv_rbcl)%in%row.names(betadiv_coi),colnames(betadiv_rbcl)%in%colnames(betadiv_coi)]
